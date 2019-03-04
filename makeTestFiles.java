@@ -1,20 +1,16 @@
 import java.io.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 public class makeTestFiles
 {
-
+    private Parser parser = new Parser();
     private Vector<String>  products = new Vector<>();
     private Vector<String>  reviewSummery = new Vector<>();
     private  Vector<String[]> recommends = new Vector<>();
     public void makeJsonFile(Vector productID, Vector<String[]> recommended, Vector<String> review) throws IOException {
         PrintWriter pw = null;
-              pw=  new PrintWriter(new BufferedWriter(new FileWriter("C:/Users/ati/IdeaProjects/Recommender/src/" + "TestFile.txt")));
+              pw=  new PrintWriter(new BufferedWriter(new FileWriter("/home/atie/my_project/Recommender/src/"+ "TestFile.txt")));
               String  recommend="";
 
         for(int i =0; i<productID.size();i++) {
@@ -33,7 +29,105 @@ public class makeTestFiles
         pw.flush();
         pw.close();
     }
-    public static void main(String[] args) throws IOException
+
+    public void makeListReady(String id) throws Exception {
+        parser.readMetaData();
+        System.out.println("meta Data Read successfully!:)");
+        //  parser.readReviewData("reviewData.strict");
+        PrintWriter file = null;
+        file = new PrintWriter(new BufferedWriter(new FileWriter("/home/atie/my_project/Recommender/src/" + "RecommendedObjects"+id+".txt")));
+        int index = parser.asin.indexOf(id);
+        Vector<String> asins = new Vector<>();
+        String category = parser.category.get(index);
+        System.out.println(category);
+        for ( int i =0 ; i<parser.category.size() ; i++){
+            if (parser.category.get(i).equals(category)){
+                asins.add(parser.asin.get(i));
+            }
+        }
+        // System.out.println(asins);
+        InputStream inputFile = getClass().getResourceAsStream("reviews.txt");
+        BufferedReader readFile = new BufferedReader(new InputStreamReader(inputFile));
+        String file_line;
+        HashMap<String, String> reviewsDic = new HashMap<>();
+        Vector<String> reviews = new Vector<>();
+        Vector<String> selectedAsins = new Vector<>();
+        int numberOfRandomObjects=50;
+        Random rand = new Random();
+        for(int i=0 ; i< numberOfRandomObjects; i++){
+            int randomIndex = rand.nextInt(asins.size());
+            String randomProduct = asins.get(randomIndex);
+            selectedAsins.add(randomProduct);
+        }
+        System.out.println(selectedAsins);
+
+
+        //we want to count review number for each selected asin and remove some of them
+      Map<String ,InternalError> reapitDic = new HashMap<>(); //dictionary for counting
+        int counter = 0;
+        //count number of reviews for each
+     /*
+            try {
+                while ((file_line = readFile.readLine()) != null) {
+                    if (file_line.contains(selectedAsins.get(m))){
+                        System.out.print(selectedAsins.get(m));
+                        counter ++;
+
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if(counter > 3){
+                finalselectedAsins.add(selectedAsins.get(m));
+                counter =0;
+            }
+
+
+        System.out.println(finalselectedAsins);
+
+
+*/
+
+
+
+        InputStream inputFile2 = getClass().getResourceAsStream("reviews.txt");
+        BufferedReader readFile2 = new BufferedReader(new InputStreamReader(inputFile2));
+        String file_line2;
+
+            try {
+                while ((file_line2 = readFile.readLine()) != null) {
+                    String[] line1 = file_line2.split("\t");
+                    id = line1[0];
+                    String over = line1[1];
+                    String review = "";
+
+                    // Vector<String> reviews = new Vector<>();
+                    for ( int j = 2 ; j < line1.length ; j++){
+                        review = review + line1[j];
+
+                    }
+
+                    for (int k = 0; k < selectedAsins.size(); k++) {
+                        if (selectedAsins.get(k).equals(id)) {
+                            // reviews.add(review);
+                            // reviewsDic.put(id, review);
+                            file.println(id + "\t" + review);
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+    file.close();
+
+  }
+
+  public static void main(String[] args) throws Exception
     {
 
    makeTestFiles test = new makeTestFiles();
@@ -182,6 +276,102 @@ public class makeTestFiles
         review = "battery does not work ";
         test.recommends.add(recs22);
         test.reviewSummery.add(review);
+
+
+    //  test.makeListReady("B008A1HFCW");
+
+      String[] recs23 = {"B003QINM4O","B0048OIB2I","B004WPHC0K"};
+      test.products.add("B008A1HFCW");
+      review = "it is not fit ";
+      test.recommends.add(recs23);
+      test.reviewSummery.add(review);
+
+      //  test.makeListReady("B008A1J3WC");
+
+      String[] recs24 = {"B006GT5LM6"};
+      test.products.add("B008A1J3WC");
+      review = "bad material";
+      test.recommends.add(recs24);
+      test.reviewSummery.add(review);
+
+
+       // test.makeListReady("B008A1KZAG");
+
+      String[] recs25 = {"B004I94B2M","B006ZATNRK",};
+      test.products.add("B008A1KZAG");
+      review = "not fit";
+      test.recommends.add(recs25);
+      test.reviewSummery.add(review);
+
+
+      // test.makeListReady("B008A1NU6C");
+
+      String[] recs26 = {"B002CSIXX4","B003VRY2SA","B0062CU0PK","B006MWOTM0","B0076WV01I"};
+      test.products.add("B008A1NU6C");
+      review = "cheap material";
+      test.recommends.add(recs26);
+      test.reviewSummery.add(review);
+
+
+      // test.makeListReady("B008A1T566");
+
+      String[] recs27 = {"B001NTZ9JY","B003ZMBSEM","B005AV7U8Y0","B006JHU4TA"};
+      test.products.add("B008A1T566");
+      review = "small size , not fit";
+      test.recommends.add(recs27);
+      test.reviewSummery.add(review);
+
+
+        // test.makeListReady("B008A1TX22");
+
+        String[] recs28 = {"B001BXY9P2","B004IN25A8","B00574DP9M","B005C2A4A2","B006GEQG3O"};
+        test.products.add("B008A1TX22");
+        review = "bad material ";
+        test.recommends.add(recs28);
+        test.reviewSummery.add(review);
+
+
+       //  test.makeListReady("B008A1U19G");
+
+        String[] recs29 = {"B00065315U","B00452TCCQ","B005R5M3RQ"};
+        test.products.add("B008A1U19G");
+        review = "hard to use ";
+        test.recommends.add(recs29);
+        test.reviewSummery.add(review);
+
+         // test.makeListReady("B008A1U2M2");
+
+        String[] recs30 = {"B004Y0R9DI","B004YKYB84","B001F2T5RG","B005973A9C","B005FQU2T8","B0060D124O"};
+        test.products.add("B008A1U2M2");
+        review = "very thin";
+        test.recommends.add(recs30);
+        test.reviewSummery.add(review);
+
+
+      //   test.makeListReady("B008A1U6G4");
+
+        String[] recs31 = {"B004BVETOM","B004GNW2T4","B0076ZZ368","B004RBP0TE"};
+        test.products.add("B008A1U6G4");
+        review = "poor design";
+        test.recommends.add(recs31);
+        test.reviewSummery.add(review);
+
+         //  test.makeListReady("B008A20FVE");
+
+        String[] recs32 = {"B000BWEN8M","B000E77I1S","B000XKOKW6","B002QOLBN8","B006LUT7S4"};
+        test.products.add("B008A20FVE");
+        review = "useless pen";
+        test.recommends.add(recs32);
+        test.reviewSummery.add(review);
+
+
+          test.makeListReady("B008AZ342I");
+
+     //   String[] recs33 = {""};
+       // test.products.add("B008AZ342I");
+        //review = "worked only one day and then doesnt work ";
+        //test.recommends.add(recs33);
+        //test.reviewSummery.add(review);
 
         test.makeJsonFile(test.products,test.recommends,test.reviewSummery);
 
